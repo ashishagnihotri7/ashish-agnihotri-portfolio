@@ -1,4 +1,3 @@
-// File: components/canvas/tech-scene.tsx
 "use client";
 
 import { useRef, useEffect, useState, useMemo } from "react";
@@ -63,7 +62,8 @@ function DataStreamDust() {
   );
 }
 
-function MicroservicesTesseract() {
+// 🪄 Yahan isMobile prop pass kiya hai
+function MicroservicesTesseract({ isMobile }: { isMobile: boolean }) {
   const groupRef = useRef<THREE.Group>(null!);
   const innerCubeRef = useRef<THREE.Mesh>(null!);
   const outerCubeRef = useRef<THREE.Mesh>(null!);
@@ -102,7 +102,8 @@ function MicroservicesTesseract() {
 
   return (
     <Float speed={3} rotationIntensity={0.8} floatIntensity={1.5}>
-      <group ref={groupRef} scale={1.2}>
+      {/* 🪄 Smart Scaling: Phone par 0.7 size, Laptop par wahi original 1.2 size */}
+      <group ref={groupRef} scale={isMobile ? 0.7 : 1.2}>
         <mesh ref={innerCubeRef}>
           <boxGeometry args={[1, 1, 1]} />
           <meshStandardMaterial
@@ -152,9 +153,24 @@ function MicroservicesTesseract() {
 
 export default function TechScene() {
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
     setMounted(true);
+
+   
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+   
+    checkMobile();
+
+    
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
   if (!mounted) return null;
 
   return (
@@ -185,7 +201,8 @@ export default function TechScene() {
           intensity={3}
           color="#06b6d4"
         />
-        <MicroservicesTesseract />
+       
+        <MicroservicesTesseract isMobile={isMobile} />
         <DataStreamDust />
       </Canvas>
     </div>
