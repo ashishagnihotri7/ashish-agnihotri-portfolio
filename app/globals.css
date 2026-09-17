@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
-
+/* Phone ke liye default normal size (16px) */
 html {
-  font-size: 13px; 
+  font-size: 16px; 
+}
+
+/* Laptop aur Tablet ke liye premium 80% size (13px) */
+@media (min-width: 768px) {
+  html {
+    font-size: 13px;
+  }
 }
 
 :root {
