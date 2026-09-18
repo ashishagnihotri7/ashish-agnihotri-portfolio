@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// 🔥 Premium SEO Metadata (Google Ranking ke liye)
+//  Premium SEO Metadata with Google Verification
 export const metadata: Metadata = {
   title: "Ashish Agnihotri | System Architect & Full Stack Developer",
   description:
@@ -38,6 +38,10 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+  },
+  //   Google ko verify karne ka jadoo laga ya hai
+  verification: {
+    google: "2O1gzxYa9YQUKDvO-5rKtrI34ChxxYMabrhCxyMBkvY",
   },
 };
 
