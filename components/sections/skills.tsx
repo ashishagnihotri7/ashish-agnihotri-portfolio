@@ -175,16 +175,13 @@ function SkillCard({ skill }: { skill: Skill }) {
       </div>
 
       {skill.projects && skill.projects.length > 0 && (
-        <div className="pt-6 border-t-2 border-slate-800/80 mt-auto flex flex-wrap gap-2">
-          {skill.projects.map((project, idx) => (
-            <span
-              key={idx}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-300 bg-slate-900 border border-slate-700 rounded-md group-hover:border-cyan-500/30 transition-colors"
-            >
-              <ChevronRight className="w-3.5 h-3.5 text-cyan-500" />
-              {project}
+        <div className="pt-5 border-t-2 border-slate-800/80 mt-auto">
+          <p className="text-sm font-medium text-slate-400 leading-relaxed group-hover:text-slate-300 transition-colors">
+            <span className="text-cyan-400 font-bold uppercase tracking-wider text-[11px] mr-2">
+              Used in:
             </span>
-          ))}
+            {skill.projects.join(", ")}
+          </p>
         </div>
       )}
     </motion.div>
