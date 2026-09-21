@@ -11,15 +11,23 @@ const MAX_REQUESTS_PER_WINDOW = 5;
 export async function POST(req: Request) {
   try {
     const origin = req.headers.get("origin");
+
+    // 🔴 SECURITY LAYER 1: Strict Origin Check
+    // Sirf tumhari live Vercel website se aayi hui request hi accept hogi
     const allowedOrigin = "https://ashish-agnihotri-portfolio.vercel.app";
 
     if (process.env.NODE_ENV === "production" && origin !== allowedOrigin) {
       return NextResponse.json(
-        { error: "Unauthorized Access." },
+        {
+          error:
+            "Unauthorized Access. API can only be called from the official portfolio website.",
+        },
         { status: 403 },
       );
     }
 
+    // 🔴 SECURITY LAYER 2: IP-Based Rate Limiting (Spam & Bot Protection)
+    // Ek user 1 minute me sirf 5 message bhej sakta hai
     const forwardedFor = req.headers.get("x-forwarded-for");
     const clientIp = forwardedFor ? forwardedFor.split(",")[0] : "127.0.0.1";
 
@@ -30,7 +38,10 @@ export async function POST(req: Request) {
       if (now - userRecord.timestamp < RATE_LIMIT_WINDOW) {
         if (userRecord.count >= MAX_REQUESTS_PER_WINDOW) {
           return NextResponse.json(
-            { error: "Rate limit exceeded. Please wait a minute." },
+            {
+              error:
+                "Rate limit exceeded. Please wait a minute before sending another message.",
+            },
             { status: 429 },
           );
         }
@@ -44,15 +55,17 @@ export async function POST(req: Request) {
 
     const { message } = await req.json();
 
-    if (!message) {
+    if (!message || typeof message !== "string") {
       return NextResponse.json(
-        { error: "Message is required" },
+        { error: "Valid message is required" },
         { status: 400 },
       );
     }
 
-    // 🔴 CHANGE 1: User sirf 50 characters tak hi type kar sakta hai
-    if (message.length > 50) {
+    // 🔴 SECURITY LAYER 3: Input Sanitization & Payload Limit (Cost Control)
+    // Koi lamba text paste karke API crash ya quota khatam nahi kar payega
+    const cleanMessage = message.trim();
+    if (cleanMessage.length > 50) {
       return NextResponse.json(
         {
           error:
@@ -62,7 +75,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // 🔴 CHANGE 2: System prompt me AI ko short answers dene ka sakht order
+    // 🔴 SECURITY LAYER 4: Strict Prompt Guardrails (Anti-Jailbreak)
     const systemPrompt = `
     You are Ashish Agnihotri's professional AI portfolio assistant. 
     Here is Ashish's background:
@@ -78,8 +91,8 @@ export async function POST(req: Request) {
     3. KEEP YOUR ANSWERS EXTREMELY SHORT AND DIRECT. Maximum 1 or 2 sentences. No long paragraphs.
     `;
 
-   const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-    const result = await model.generateContent([systemPrompt, message]);
+    const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
+    const result = await model.generateContent([systemPrompt, cleanMessage]);
     const responseText = result.response.text();
 
     return NextResponse.json({ reply: responseText });
