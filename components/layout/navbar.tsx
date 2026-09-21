@@ -2,15 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Terminal, Menu, X, FileText } from "lucide-react";
+import { Terminal, Menu, X } from "lucide-react";
 import { personalInfo } from "@/content/personal";
-// 🔴 Naya import lagaya hai
-import { ResumeModal } from "../ui/resume-modal";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  // 🔴 State ka naam change karke resumeOpen kar diya
-  const [resumeOpen, setResumeOpen] = useState(false);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full bg-[#030712]/90 backdrop-blur-md border-b border-slate-800 shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
@@ -68,18 +64,9 @@ export function Navbar() {
           >
             Contact
           </Link>
-
-          {/* 🔴 RESUME Button (Desktop) */}
-          <button
-            onClick={() => setResumeOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold uppercase tracking-wider hover:bg-cyan-500 hover:text-slate-900 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] transition-all duration-300"
-          >
-            <FileText className="w-4 h-4" />
-            <span>Resume</span>
-          </button>
         </nav>
 
-        {/* Socials & Actions */}
+        {/* Socials & Actions (Desktop) */}
         <div className="flex items-center gap-3 z-10">
           <div className="hidden md:flex items-center gap-2">
             <a
@@ -163,19 +150,7 @@ export function Navbar() {
             Contact
           </Link>
 
-          {/* 🔴 RESUME Button (Mobile) */}
-          <button
-            onClick={() => {
-              setMobileMenuOpen(false);
-              setResumeOpen(true);
-            }}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 mt-4 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-sm font-bold uppercase tracking-wider hover:bg-cyan-500 hover:text-slate-900 transition-all duration-300"
-          >
-            <FileText className="w-4 h-4" />
-            <span>View Resume</span>
-          </button>
-
-          {/* Mobile Social Icons */}
+          {/* Mobile Social Icons - Ye ekdum safe hai aur bottom me dikhega! */}
           <div className="flex items-center justify-center gap-6 pt-6 mt-2 border-t border-slate-800/80">
             <a
               href={personalInfo.socials.linkedin}
@@ -200,9 +175,6 @@ export function Navbar() {
           </div>
         </div>
       )}
-
-      {/*  Resume Modal Render */}
-      <ResumeModal isOpen={resumeOpen} onClose={() => setResumeOpen(false)} />
     </header>
   );
 }
