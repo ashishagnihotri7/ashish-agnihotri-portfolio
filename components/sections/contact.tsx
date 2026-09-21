@@ -16,7 +16,6 @@ export function Contact() {
   ]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Ye function backend API ko call karega (Step 2 me banayenge)
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
@@ -27,15 +26,17 @@ export function Contact() {
     setIsLoading(true);
 
     try {
-      // Yahan hum apna Real AI Backend call karenge
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: newMessages }),
+        body: JSON.stringify({ message: input }), // Yahan dhyan dena, api route string expect kar raha hai
       });
 
       const data = await response.json();
-      setMessages([...newMessages, { role: "assistant", content: data.reply }]);
+      setMessages([
+        ...newMessages,
+        { role: "assistant", content: data.reply || data.error },
+      ]);
     } catch (error) {
       setMessages([
         ...newMessages,
@@ -107,19 +108,36 @@ export function Contact() {
         {/* Input Form */}
         <form
           onSubmit={handleSendMessage}
-          className="p-4 bg-slate-900 border-t border-slate-800 shrink-0 flex gap-3"
+          className="p-4 bg-slate-900 border-t border-slate-800 shrink-0 flex gap-3 items-center"
         >
-          <span className="text-cyan-500 font-mono mt-2 hidden sm:block">
+          <span className="text-cyan-500 font-mono hidden sm:block">
             guest@portfolio:~$
           </span>
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="E.g. What is Ashish's strongest skill?"
-            className="flex-1 bg-[#030712] border border-slate-700 rounded-lg px-4 py-2 text-slate-200 font-mono text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
-            disabled={isLoading}
-          />
+
+          {/* 🔴 NEW WRAPPER FOR INPUT AND COUNTER 🔴 */}
+          <div className="relative flex-1">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              maxLength={50} // 🔴 MAGIC 1: Max 50 Characters Lock
+              placeholder="Ask short question..."
+              className="w-full bg-[#030712] border border-slate-700 rounded-lg pl-4 pr-14 py-2 text-slate-200 font-mono text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
+              disabled={isLoading}
+            />
+
+            {/* 🔴 MAGIC 2: Dynamic Counter (Absolute positioned inside the input) */}
+            <span
+              className={`absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold transition-colors ${
+                input.length === 50
+                  ? "text-red-500 animate-pulse"
+                  : "text-slate-500"
+              }`}
+            >
+              {input.length}/50
+            </span>
+          </div>
+
           <button
             type="submit"
             disabled={isLoading || !input.trim()}
