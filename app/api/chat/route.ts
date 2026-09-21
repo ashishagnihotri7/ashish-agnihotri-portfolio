@@ -78,7 +78,7 @@ export async function POST(req: Request) {
     3. KEEP YOUR ANSWERS EXTREMELY SHORT AND DIRECT. Maximum 1 or 2 sentences. No long paragraphs.
     `;
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+   const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     const result = await model.generateContent([systemPrompt, message]);
     const responseText = result.response.text();
 
